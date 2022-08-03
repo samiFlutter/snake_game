@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -55,6 +58,7 @@ class _MainClassState extends State<MainClass> {
     Timer.periodic(duration, (Timer timer) {
       updateSnake();
       if (gameOver() || endGame) {
+        sound(2);
         timer.cancel();
         showGameOverDialog();
         playing = false;
@@ -64,7 +68,31 @@ class _MainClassState extends State<MainClass> {
       }
     });
   }
+//make sound
+  sound(int whichSound) async {
+    if(whichSound==1){
+      AudioPlayer player = AudioPlayer();
+      //await player.play(DeviceFileSource("a.mp3"));
+      //await player.setSource(AssetSource('a.mp3'));
 
+      String audioasset = "assets/a.mp3";
+      ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+      Uint8List audiobytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+      Source? c=BytesSource(audiobytes);
+      await player.play(c);
+    }
+    if(whichSound==2){
+      AudioPlayer player = AudioPlayer();
+      //await player.play(DeviceFileSource("a.mp3"));
+      //await player.setSource(AssetSource('a.mp3'));
+
+      String audioasset = "assets/fail.mp3";
+      ByteData bytes = await rootBundle.load(audioasset); //load audio from assets
+      Uint8List audiobytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
+      Source? c=BytesSource(audiobytes);
+      await player.play(c);
+    }
+  }
 //verifie si la deux cellules ont la meme position
   gameOver() {
     for (int i = 0; i < snakePosition.length; i++) {
@@ -77,6 +105,7 @@ class _MainClassState extends State<MainClass> {
           setState(() {
             playing = false;
           });
+
           return true;
         }
       }
@@ -147,6 +176,7 @@ class _MainClassState extends State<MainClass> {
         default:
       }
       if (snakePosition.last == food) {
+        sound(1);
         generateNewFood();
       } else {
         snakePosition.removeAt(0);
